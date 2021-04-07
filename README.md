@@ -1,3 +1,9 @@
+# Welcome to Wat Shall I Eat
+This is a project to help people decide what to eat around them, and how they want to order. If that's ordering from a food delivery service, driving or walking. The estimated time will be available.
+
+# Collaboration
+I expect anyone that was invited to this project to have a role one way or another. In order to start working on the project you will need to create your own branch and pull the code down locally. Once you've done that reach out to me in order to add the `process.env` file which houses the API keys needed for this project. I have left the standard README that React gives below in case you need to know how to run the project locally.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
