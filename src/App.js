@@ -3,7 +3,7 @@ import WatShallIEat from './components/WatShallIEat';
 
 export default () => {
     return(
-        <div className="ui container">
+        <div>
             <WatShallIEat />
         </div>
     );

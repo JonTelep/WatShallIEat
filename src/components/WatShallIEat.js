@@ -1,40 +1,50 @@
-/*
-This component will house the main page of Wat Shall I Eat
-There will be other components in here eventually
-*/
 import React, { useEffect, useState} from 'react';
-
+import Form from './Form';
+import GooglePlaces from '../apis/GooglePlaces';
+//import Loader from './Loader';
 
 const WatShallIEat = () => {
-    //Initializing State Variables
-    const [latitude, setLatitude]  = useState(null);
-    const [longitude, setLongitude] = useState(null);
-    //const [locationAccess, setLocationAccess] = useState(false);
-    
-
-    //Below makes the browser ask the user for their location as soon as the site is loaded
-    useEffect(() => {
-        navigator.geolocation.getCurrentPosition((position) => {
-            setLatitude(position.coords.latitude);
-            setLongitude(position.coords.longitude);
-         /*    latitude = position.coords.latitude;
-            longitude = position.coords.longitude; */
-          });
-
-    }, []);
-
-/*     if(latitude !== null && longitude !== null){
-        setLocationAccess(true);
-    } */
-
-
-
-    return(
-        <div>
-             <div>{latitude} and {longitude} </div>
+     //Initializing State Variables
+     const [latitude, setLatitude]  = useState();
+     const [longitude, setLongitude] = useState();
+     const [error, setError] = useState('');
+     const [debug, setDebug] = useState(0);
+     //const [locationAccess, setLocationAccess] = useState(false);
+     
+ 
+     //Below makes the browser ask the user for their location as soon as the site is loaded
+     useEffect(() => {
+         const findLocation = () => {
+            window.navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    setLatitude(position.coords.latitude);
+                    setLongitude(position.coords.longitude);
+                },
+                err => {
+                    setError(err.message);
+                });
+            }
+            findLocation();
+            setDebug(debug+1);
+            console.log(debug);
+     }, []);
+        
+        /*     if(latitude !== null && longitude !== null){
+            setLocationAccess(true);
+        } */
+    return (
+        <div  className="ui container">
+            <Form />
+            <div class="ui divider">
+                <GooglePlaces
+                    lat={latitude}
+                    lng={longitude}
+                />
+            </div>
         </div>
-
     );
 }
 
 export default WatShallIEat;
+
+
