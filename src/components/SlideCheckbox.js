@@ -1,24 +1,27 @@
 import React, { useState, useEffect, useRef } from 'react';
 
-const SlideCheckbox = ({label, onSelectedChange, selected}) => {
-    const [open, setOpen] = useState(false); //defaulting dropdown closed, creating state to open and close dropdown
+const SlideCheckbox = ({label, onSelectedChange, options, selected}) => {
+    const [open, setOpen] = useState(false); //defaulting checkbox as not selected
     const ref = useRef();
 
     useEffect(() => {
         const onBodyClick = (event) => {
             if(ref.current && ref.current.contains(event.target)) {
+                console.log("inside if statement");
                 return;
+                
             }
-            setOpen(false);
+            setOpen(!open);
+            console.log("I was clicked");
         }
-        document.body.addEventListener('click', onBodyClick);
+            document.body.addEventListener('click', onBodyClick);
 
         return () => {
             document.body.removeEventListener('click', onBodyClick);
-        };
+        }; 
     }, []);
 
-/*     const renderedOptions = options.map((option) => {
+     const renderedOptions = options.map((option) => {
         if(option.value === selected.value){
             return null;
         }
@@ -31,7 +34,12 @@ const SlideCheckbox = ({label, onSelectedChange, selected}) => {
                 {option.label}
             </div>
         );
-    }); */
+    }); 
+
+    const iwasclicked = () =>{
+        console.log("I was clicked");
+        //
+    }
     
     return(
         <div ref={ref} className="ui form">

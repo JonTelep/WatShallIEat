@@ -8,7 +8,7 @@ const WatShallIEat = () => {
      const [latitude, setLatitude]  = useState();
      const [longitude, setLongitude] = useState();
      const [error, setError] = useState('');
-     const [debug, setDebug] = useState(0);
+  
      //const [locationAccess, setLocationAccess] = useState(false);
      
  
@@ -25,8 +25,7 @@ const WatShallIEat = () => {
                 });
             }
             findLocation();
-            setDebug(debug+1);
-            console.log(debug);
+
      }, []);
         
         /*     if(latitude !== null && longitude !== null){

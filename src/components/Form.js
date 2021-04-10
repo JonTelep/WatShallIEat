@@ -6,7 +6,7 @@ import React, {  useState} from 'react';
 import Dropdown from './Dropdown';
 import SlideCheckbox from './SlideCheckbox';
 
-const options = [
+const radiusOptions = [
     {
         label: '1 miles',
         value: '1'
@@ -27,10 +27,38 @@ const options = [
         label: '5 miles',
         value: '5'
     }
+];
+
+const foodOptions = [
+    {
+        label: 'Asian',
+        value: 'Asian',
+    },
+    {
+        label: 'Mexican',
+        value: 'Mexican',
+    },
+    {
+        label: 'Thai',
+        value: 'Thai',
+    },
+    {
+        label: 'Fastfood',
+        value: 'Fastfood',
+    },
+    {
+        label: 'Bars',
+        value: 'Bars',
+    },
+    {
+        label: 'Indian',
+        value: 'Indian',
+    }
 ]
 
 const WatShallIEat = () => {
-    const [radius, setRadius] = useState(options[0])
+    const [radius, setRadius] = useState(options[0]);
+    const [food, setFood] = useState(options[0]);
     const [checkboxStatus, setCheckboxStatus] = useState(false);
     return(
         <div class="ui form">
@@ -42,23 +70,14 @@ const WatShallIEat = () => {
                     label="Select a radius"
                     selected={radius}
                     onSelectedChange={setRadius}
-                    options={options}
+                    options={radiusOptions}
                 /> 
                 <h3>Select types of foods:</h3>
                 <SlideCheckbox
                     label="Asian"
-                    selected={radius}
-                    onSelectedChange={setRadius}
-                />
-                <SlideCheckbox
-                    label="Mexican"
-                    selected={radius}
-                    onSelectedChange={setRadius}
-                />
-                <SlideCheckbox
-                    label="Indian"
-                    selected={radius}
-                    onSelectedChange={setRadius}
+                    selected={food}
+                    onSelectedChange={setFood}
+                    options={foodOptions}
                 />
             </div>
 
