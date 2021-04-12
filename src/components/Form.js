@@ -33,33 +33,28 @@ const foodOptions = [
     {
         label: 'Asian',
         value: 'Asian',
-    },
-    {
-        label: 'Mexican',
-        value: 'Mexican',
-    },
-    {
-        label: 'Thai',
-        value: 'Thai',
+
     },
     {
         label: 'Fastfood',
         value: 'Fastfood',
     },
     {
-        label: 'Bars',
-        value: 'Bars',
+        label: 'Mexican',
+        value: 'Mexican',
     },
     {
         label: 'Indian',
         value: 'Indian',
-    }
+    },
+    {
+        label: 'Thai',
+        value: 'Thai',
+    },
 ]
 
 const WatShallIEat = () => {
-    const [radius, setRadius] = useState(options[0]);
-    const [food, setFood] = useState(options[0]);
-    const [checkboxStatus, setCheckboxStatus] = useState(false);
+    const [radius, setRadius] = useState(radiusOptions[0]);
     return(
         <div class="ui form">
             <h3 className="ui top attached header">
@@ -73,19 +68,13 @@ const WatShallIEat = () => {
                     options={radiusOptions}
                 /> 
                 <h3>Select types of foods:</h3>
-                <SlideCheckbox
-                    label="Asian"
-                    selected={food}
-                    onSelectedChange={setFood}
+                <SlideCheckbox  
                     options={foodOptions}
                 />
-            </div>
-
-
-
-
-
-                 
+            </div>    
+            <button class="massive ui button">
+            Run it
+            </button> 
         </div>
     );
 }
@@ -95,6 +84,15 @@ export default WatShallIEat;
 
 
 /*
+                <input 
+                    type="checkbox" 
+                    tabindex="0" 
+                    class="hidden"
+                    checked={isChecked}
+                    onChange={(e) => setIsChecked(e.target.checked)}>
+                    </input>
+
+
         <div class="inline field">
                     <div class="ui toggle checkbox">
                     <input type="checkbox" tabindex="0" class="hidden">
