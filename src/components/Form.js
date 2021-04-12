@@ -31,30 +31,54 @@ const radiusOptions = [
 
 const foodOptions = [
     {
-        label: 'Asian',
+        id: 1,
         value: 'Asian',
-
+        isChecked: false
     },
     {
-        label: 'Fastfood',
+        id: 2,
         value: 'Fastfood',
+        isChecked: false
     },
     {
-        label: 'Mexican',
+        id: 3,
         value: 'Mexican',
+        isChecked: false
     },
     {
-        label: 'Indian',
+        id: 4,
         value: 'Indian',
+        isChecked: false
     },
     {
-        label: 'Thai',
+        id: 5,
         value: 'Thai',
-    },
-]
+        isChecked: false
+    }
+];
 
 const WatShallIEat = () => {
     const [radius, setRadius] = useState(radiusOptions[0]);
+    const [foodOptions, setFoodOptions] = useState(foodOptions);
+
+
+    const handleAllChecked = (event) => {
+        let foodOptions = foodOptions;
+        foodOptions.forEach(food => food.isChecked = event.target.checked) ;
+        setFoodOptions(foodOptions);
+      }
+    
+      const handleCheckChieldElement = (event) => {
+        let foodOptions = foodOptions;
+        foodOptions.forEach(food => {
+           if (food.value === event.target.value)
+              food.isChecked =  event.target.checked
+        })
+        //this.setState({fruites: fruites})
+        setFoodOptions(foodOptions);
+      }
+
+
     return(
         <div class="ui form">
             <h3 className="ui top attached header">
@@ -68,9 +92,20 @@ const WatShallIEat = () => {
                     options={radiusOptions}
                 /> 
                 <h3>Select types of foods:</h3>
-                <SlideCheckbox  
-                    options={foodOptions}
-                />
+                <input onClick={handleAllChecked} type="checkbox" value="checkedall" /> Check / Uncheck All
+                <ul>
+                    {
+                        foodOptions.map((food) => {
+                            return (<SlideCheckbox handleCheckChieldElement={handleCheckChieldElement} {...food} />)
+                        })
+                    }
+                </ul>
+
+
+
+
+
+
             </div>    
             <button class="massive ui button">
             Run it

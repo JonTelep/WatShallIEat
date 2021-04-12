@@ -1,87 +1,55 @@
-import React, { useState, useEffect, useRef } from 'react';
+//import React, { useState, useEffect, useRef } from 'react';
+import React from 'react'
 
-/* const SlideCheckbox = ({label, onSelectedChange, options, selected}) => {
-    const [open, setOpen] = useState(false); //defaulting checkbox as not selected
-    const ref = useRef();
-
-    useEffect(() => {
-        const onBodyClick = (event) => {
-            if(ref.current && ref.current.contains(event.target)) {
-                console.log("inside if statement");
-                return;
-                
-            }
-            setOpen(!open);
-            console.log("I was clicked");
-        }
-            document.body.addEventListener('click', onBodyClick);
-
-        return () => {
-            document.body.removeEventListener('click', onBodyClick);
-        }; 
-    }, []);
-
-     const renderedOptions = options.map((option) => {
-        if(option.value === selected.value){
-            return null;
-        }
-        return (
-            <input 
-            key={option.value} 
-            type="checkbox"
-            tabIndex="0"
-            className="hidden"
-                onClick={() => onSelectedChange(option)}
-                >
-                {option.label}
-            </input>
-        );
-    }); 
-
-    const handle = () =>{
-        console.log("I was clicked");
-        //
-    }
-    
-    return(
-        <div ref={ref} className="ui form">
-            <div className="inline field">
-                <div 
-                    onClick={() => setOpen(!open)}
-                    className={`ui toggle checkbox ${open ? 'checked': ''}`}
-                >
-                {renderedOptions}
-                </div>
-            </div>
-        </div>
-    );
-
+export const CheckBox = props => {
+    return (
+      <li>
+       <input key={props.id} onClick={props.handleCheckChieldElement} type="checkbox" checked={props.isChecked} value={props.value} /> {props.value}
+      </li>
+    )
 }
 
-export default SlideCheckbox; */
+export default CheckBox
 
-const SlideCheckbox = ({options}) => {
+
+
+
+
+/* const SlideCheckbox = ({options}) => {
     const [isChecked, setIsChecked] = useState(false);
-
     const handleCheck = (e) => {
+
         setIsChecked(e.target.checked);
+        option.isChecked = e.target.checked;
+        console.log(e.target.value)
+        console.log(isChecked);
+
+    }
+
+    const handleAllChecked = (event) => {
+
     }
 
     const renderedOptions = options.map((option) => {
-/*         if(option.value === selected.value){
-            return null;
-        } */
+
         //console.log(option.value);
         return (
-            <div
-            key={option.value}
+            <div           
             className="inline field">
+                <h1>Check and Uncheck All Example</h1>
+                <input type="checkbox" onClick={handleAllChecked}  value="checkedall" /> Check / Uncheck All
                 <div className={`ui toggle checkbox ${isChecked ? 'checked': ''}`}>
+                    {
+                        options.map((option)) => {
+                            return ( <>)
+                        }
+                    }
                     <input
+                    key={option.value}
                     type="checkbox"
                     value={option.value}
-                    checked={isChecked}
-                    onChange={handleCheck} 
+                    checked={option.isChecked}
+                    onChange={handleCheck(option)} 
                     />
                         <label>{option.label}</label>
                 </div>
@@ -98,4 +66,4 @@ const SlideCheckbox = ({options}) => {
     )
 }
 
-export default SlideCheckbox;
+export default SlideCheckbox; */
