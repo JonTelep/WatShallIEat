@@ -7,9 +7,11 @@ const SlideCheckbox = ({options, currentUserId}) => {
             if(option.id == event.target.id){
                 if(checkRef.current.checked === true){
                     option.checked = false;
+                    option.isChecked = false;
                 }
                 if(checkRef.current.checked === false){
                     option.checked = true;
+                    option.isChecked = true;
                 }                
             }
         });

@@ -3,29 +3,30 @@ This component will house the main page of Wat Shall I Eat
 There will be other components in here eventually
 */
 import React, {  useState} from 'react';
+import { useEffect } from 'react/cjs/react.development';
 import Dropdown from './Dropdown';
 import SlideCheckbox from './SlideCheckbox';
 
 const radiusOptions = [
     {
-        label: '1 miles',
-        value: '1'
-    },
-    {
-        label: '2 miles',
-        value: '2'
-    },
-    {
-        label: '3 miles',
-        value: '3'
-    },
-    {
-        label: '4 miles',
-        value: '4'
-    },
-    {
         label: '5 miles',
         value: '5'
+    },
+    {
+        label: '10 miles',
+        value: '10'
+    },
+    {
+        label: '15 miles',
+        value: '15'
+    },
+    {
+        label: '20 miles',
+        value: '20'
+    },
+    {
+        label: '25 miles',
+        value: '25'
     }
 ];
 
@@ -65,15 +66,48 @@ const foodOptions = [
         label: 'Thai',
         value: 'Thai',
         isChecked: false
+    },
+    {
+        id: 6,
+        label: 'Sushi',
+        value: 'Sushi',
+        isChecked: false
     }
 ];
 
-const WatShallIEat = () => {
 
+
+const WatShallIEat = ({latitude, longitude}) => {
     const [radius, setRadius] = useState(radiusOptions[0]);
+    const [foodResults, setFoodResults] = useState(foodOptions);
+    
+
+    const onChangeCheckbox = (foodOptions) =>{
+        setFoodResults(foodOptions);
+    }
+    const onChangeRadius = (radius) =>{
+        setRadius(radius);
+    }
+
+    const handleSubmit = () =>{
+        console.log(radius);
+        console.log(longitude);
+        console.log(latitude);
+        console.log(foodOptions);
+
+    }
+    
+/*     const PostalCodeContent = () => {
+        return(
+            <div class="field">
+                <label>First Name</label>
+                <input type="text" name="first-name" placeholder="Enter Postal Code" />
+            </div>
+        );
+    } */
     
     return(
-        <div class="ui form">
+        <div className="ui form">
         <h3 className="ui top attached header">
             Please select some options
         </h3>
@@ -83,40 +117,26 @@ const WatShallIEat = () => {
                 selected={radius}
                 onSelectedChange={setRadius}
                 options={radiusOptions}
+                onChange={onChangeRadius}
             /> 
+            {/* {latitude ? PostalCodeContent : ''} */}
+
             <h3>Select types of foods:</h3>
             <SlideCheckbox  
                 options={foodOptions}
+                onChange={onChangeCheckbox}
             />
         </div>    
-        <button class="massive ui button">
+        <button 
+        className="massive ui button"
+        onClick={handleSubmit}
+        >
         Run it
         </button> 
+        
+        
     </div>
     );
 }
 
 export default WatShallIEat;
-
-
-
-/*
-                <input 
-                    type="checkbox" 
-                    tabindex="0" 
-                    class="hidden"
-                    checked={isChecked}
-                    onChange={(e) => setIsChecked(e.target.checked)}>
-                    </input>
-
-
-        <div class="inline field">
-                    <div class="ui toggle checkbox">
-                    <input type="checkbox" tabindex="0" class="hidden">
-                        </input>
-                    <label>Asian</label>
-                    </div>
-                </div>
-
-                */
-
