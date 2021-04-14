@@ -11,7 +11,9 @@ const GooglePlaces = ( {lat, lng}) => {
     return(
         <div>
              Below is the map:
-            <MapContainer />
+            <MapContainer
+                
+            />
         </div>
     );
 }

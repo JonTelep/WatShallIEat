@@ -1,55 +1,36 @@
-//import React, { useState, useEffect, useRef } from 'react';
-import React from 'react'
+import React, { useState, useEffect, useRef } from 'react';
 
-export const CheckBox = props => {
-    return (
-      <li>
-       <input key={props.id} onClick={props.handleCheckChieldElement} type="checkbox" checked={props.isChecked} value={props.value} /> {props.value}
-      </li>
-    )
-}
-
-export default CheckBox
-
-
-
-
-
-/* const SlideCheckbox = ({options}) => {
-    const [isChecked, setIsChecked] = useState(false);
-    const handleCheck = (e) => {
-
-        setIsChecked(e.target.checked);
-        option.isChecked = e.target.checked;
-        console.log(e.target.value)
-        console.log(isChecked);
-
-    }
-
-    const handleAllChecked = (event) => {
-
+const SlideCheckbox = ({options, currentUserId}) => {
+    const checkRef = useRef();
+    const handleCheck = (event) => {
+        options.map(option => {            
+            if(option.id == event.target.id){
+                if(checkRef.current.checked === true){
+                    option.checked = false;
+                }
+                if(checkRef.current.checked === false){
+                    option.checked = true;
+                }                
+            }
+        });
     }
 
     const renderedOptions = options.map((option) => {
-
-        //console.log(option.value);
         return (
-            <div           
+            <div
+            key={option.id}
             className="inline field">
-                <h1>Check and Uncheck All Example</h1>
-                <input type="checkbox" onClick={handleAllChecked}  value="checkedall" /> Check / Uncheck All
-                <div className={`ui toggle checkbox ${isChecked ? 'checked': ''}`}>
-                    {
-                        options.map((option)) => {
-                            return ( <>)
-                        }
-                    }
+                <div
+                id={`checkbox${option.id}`}
+                className= {`ui toggle checkbox ${option.checked ? 'checked': ''}`}
+                >
                     <input
-                    key={option.value}
+                    ref={checkRef}
+                    id={option.id}
                     type="checkbox"
                     value={option.value}
-                    checked={option.isChecked}
-                    onChange={handleCheck(option)} 
+                    checked={option.checked}
+                    onChange={handleCheck} 
                     />
                         <label>{option.label}</label>
                 </div>
@@ -60,10 +41,10 @@ export default CheckBox
     return(
         <div className="inline field">
             <div >
-                {renderedOptions}
+                {renderedOptions} 
             </div>
         </div>
     )
 }
 
-export default SlideCheckbox; */
+export default SlideCheckbox;

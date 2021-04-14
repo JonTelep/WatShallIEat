@@ -27,6 +27,7 @@ const WatShallIEat = () => {
             findLocation();
 
      }, []);
+
         
         /*     if(latitude !== null && longitude !== null){
             setLocationAccess(true);
@@ -35,10 +36,10 @@ const WatShallIEat = () => {
         <div  className="ui container">
             <Form />
             <div class="ui divider">
-                <GooglePlaces
+   {/*              <GooglePlaces
                     lat={latitude}
                     lng={longitude}
-                />
+                /> */}
             </div>
         </div>
     );
