@@ -1,53 +1,24 @@
-import React, { useEffect, useState} from 'react';
-import Form from './Form';
-import Loader from './Loader';
-import GooglePlaces from '../apis/GooglePlaces';
-//import Loader from './Loader';
+/*
+This component will house the main page of Wat Shall I Eat
+There will be other components in here eventually
+*/
+import React from 'react';
+import FoodForm from './Form';
 
-const WatShallIEat = () => {
-     //Initializing State Variables
-     const [latitude, setLatitude]  = useState(null);
-     const [longitude, setLongitude] = useState(null);
-     const [error, setError] = useState('');
-  
-     //const [locationAccess, setLocationAccess] = useState(false);
-
-     //Below makes the browser ask the user for their location as soon as the site is loaded
-     useEffect(() => {
-        window.navigator.geolocation.getCurrentPosition(
-            position => {
-                setLatitude(position.coords.latitude);
-                setLongitude(position.coords.longitude);
-            },
-            err => {
-                setError(err.message);
-            });
-     }, []);
-        //console.log(latitude);
-        //console.log(longitude);
-        if(error){
-            return <div>Error: {error}</div>;
-        }
-        if(latitude && longitude){
-            return (
-                <div  className="ui container">
-                    <Form 
-                        latitude={latitude}
-                        longitude={longitude} 
-                    />
-                    <div className="ui divider">
-    {/*              <GooglePlaces
-                            lat={latitude}
-                            lng={longitude}
-                        />  */}
-                    </div>
-                </div>
-            );
-        }
-
-        return <Loader message="Accept location request." />;
+const WatShallIEat = ( props ) => {    
+    return(
+        <div className="ui form">
+            <h3 className="ui top attached header">
+                Please select some options
+            </h3>
+            <div className="ui attached segment">                
+                <FoodForm 
+                    latitude={props.lat}
+                    longitude={props.lng}
+                />
+            </div>      
+        </div>
+    );
 }
 
 export default WatShallIEat;
-
-

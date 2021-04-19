@@ -1,17 +1,23 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 
 const SlideCheckbox = ({options, currentUserId}) => {
     const checkRef = useRef();
     const handleCheck = (event) => {
+        const target = event.target;
+        const name = target.name;
         options.map(option => {            
-            if(option.id == event.target.id){
+            console.log(option.id);
+            console.log(target.id);
+            if(option.id == target.id){
                 if(checkRef.current.checked === true){
                     option.checked = false;
                     option.isChecked = false;
+                    console.log("true");
                 }
                 if(checkRef.current.checked === false){
                     option.checked = true;
                     option.isChecked = true;
+                    console.log("false");
                 }                
             }
         });
@@ -29,6 +35,7 @@ const SlideCheckbox = ({options, currentUserId}) => {
                     <input
                     ref={checkRef}
                     id={option.id}
+                    name={option.value}
                     type="checkbox"
                     value={option.value}
                     checked={option.checked}
