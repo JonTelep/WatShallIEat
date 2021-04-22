@@ -18,6 +18,7 @@ class App extends React.Component {
 
     //Grab user's location a single time
     componentDidMount() {
+        console.log(`Initial formBody is: ${this.state.formBody}`);
         window.navigator.geolocation.getCurrentPosition(
             (position) => {
                 this.setState({ latitude: position.coords.latitude });
@@ -43,10 +44,12 @@ class App extends React.Component {
                         lng={this.state.longitude}
                     />
                     <div className="ui divider">
-                        <MapContainer 
+                
+{/*                         <MapContainer 
                         lat={this.state.latitude}
                         lng={this.state.longitude}
-                        />
+                        /> */}
+                        
                     </div>
                 </div>
             );

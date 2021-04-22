@@ -7,7 +7,7 @@ const GooglePlaces = ( {lat, lng}) => {
     console.log(`longitude is ${lng}`); 
     
 
-
+ 
     return(
         <div>
              Below is the map:

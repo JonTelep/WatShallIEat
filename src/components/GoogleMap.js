@@ -2,6 +2,7 @@
 Using google-maps-react in order to render google maps
 reference doc located:
 https://www.npmjs.com/package/google-maps-react
+
 */
 import React, { Component } from 'react';
 import {Map, InfoWindow, Marker, GoogleApiWrapper} from 'google-maps-react';
@@ -43,7 +44,8 @@ export class MapContainer extends Component {
       return (
         <div>
             <Map 
-            style={{width: '75%', height: '75%', position: 'fixed'}}
+            style={{width: '75%', height: '75%', position: 'relative'}}
+            
                 google={this.props.google}
                 initialCenter={{
                         lat: this.state.mapCenter.lat,
