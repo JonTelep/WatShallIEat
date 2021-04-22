@@ -28,31 +28,18 @@ const FoodForm = (props) => (
         foodsChecked: [],
         lat: props.latitude,
         lng: props.longitude,
-        //responseData: null
       }}
       onSubmit={async (values) => {    
         await sleep(500);
-        console.log(JSON.stringify(values, null, 2));
-        //props.onChange(JSON.stringify(values, null, 2));
-        //console.log(`Created formBody is: ${this.state.formBody}`);
-        
-        //console.log(`The key is ${process.env.REACT_APP_API_GOOGLE_PLACES}`);
-
-         axios.get(`https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/findplacefromtext/json?key=${process.env.REACT_APP_API_GOOGLE_PLACES}&location=${props.latitude},${props.longitude}&radius=${values.radius}&input=restaurant,cafe&inputtype=textquery&fields=icon,geometry,formatted_address,name,opening_hours,price_level,opening_hours,business_status`)
+         axios.get(`https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${process.env.REACT_APP_API_GOOGLE_PLACES}&location=${props.latitude},${props.longitude}&radius=${values.radius}&keyword=restaurant,cafe&fields=icon,geometry,formatted_address,name,opening_hours,price_level,opening_hours,business_status`)
         .then(response =>{
-          props.onChange(JSON.stringify(response.data));
-          //console.log(typeof JSON.stringify(response.data));
-          //console.log(response.data);
+          props.onChange(response.data.results);
         
         })
         .catch(err => {
             console.log(err);
         });
 
-
-/*         console.log("Print is below");
-        console.log(props.); 
-        console.log("Print is above"); */
       }}
     >
       {({ values }) => (

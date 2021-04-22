@@ -7,53 +7,53 @@ the cap is 50000 meters equivalent to 31 miles
 */
 import React, { useState } from 'react';
 import FoodForm from './Form';
-
-
-
-
-
+import RandomPlace from './RandomPlace';
 
 const WatShallIEat = ( props ) => { 
     const [displaySelection, setDisplaySelection] = useState(false);
-    const [displayRandomFood, setDisplayRandomFood] = useState(null);
-    const candidatesArray = [
+    const [candidatesArray, setCandidatesArray] = useState([
         {
             name: 'Initial',
-            address: '123 init drive'
+            address: '123 init drive',
+            openNow: false,
+            photoId : ''
         }
-    ];
+    ]);
 
-
-    const formatResponseBody = (value) => {
-        //onChange={(value) => setFormBody(value)}
-        var resultObject = JSON.parse(value);
-
-
-        for(var i = 0; i<resultObject.candidates.length; i ++){
-            candidatesArray[i] =  { name: resultObject.candidates[i].name, address: resultObject.candidates[i].formatted_address };
-            console.log(candidatesArray);
-        }
-        var randomFoodIndex = getRandomNumber(resultObject.candidates.length);
-        console.log(`random index is: ${randomFoodIndex}`);
-         setDisplayRandomFood(
-            `<div key=${resultObject.candidates[randomFoodIndex].address}>
-                <h3>Name:</h3>
-                <div>
-                    ${resultObject.candidates[randomFoodIndex].name}
-                </div>
-                <h3>Address:</h3>
-                <div>
-                    ${resultObject.candidates[randomFoodIndex].address}
-                </div>
-            
-            </div>`) 
-        setDisplaySelection(true);
-
-    }
-
+    
     const getRandomNumber = (max) => {
         return Math.floor(Math.random() * max);
     }
+
+
+    const formatResponseBody = (value) => {
+        setDisplaySelection(false);
+        //onChange={(value) => setFormBody(value)}
+       
+        console.log(typeof value);
+        console.log(value.length);
+        console.log(value[1].name);
+        var resultObject = value;
+
+
+
+        for(var i = 0; i<resultObject.length; i ++){
+            candidatesArray[i] =  { 
+                name: resultObject[i].name, 
+                address: resultObject[i].vicinity,
+                openNow: resultObject[i].opening_hours.open_now,
+                photoId: resultObject[i].photos[0].photo_reference,
+            };
+            console.log(candidatesArray);
+        }
+        var randomFoodIndex = getRandomNumber(candidatesArray.length);
+        console.log(`random index is: ${randomFoodIndex}`);
+       
+        setDisplaySelection(true);
+        
+
+    }
+
 
     if(!displaySelection){
         return(
@@ -92,7 +92,7 @@ const WatShallIEat = ( props ) => {
                 </h3>
                 <div className="ui attached segment">  
                 Should be below here:              
-                    { displayRandomFood }
+                    <RandomPlace place={candidatesArray[getRandomNumber(candidatesArray.length)]} />
                     
                 </div>      
             </div>
