@@ -9,6 +9,15 @@ const Header = () => {
                 <i className="utensils icon"></i>
                 Wat Shall I Eat 
             </h2>
+            <div className="ui negative message">
+                
+                <div className="header">
+                    This site is in very early stages.
+                </div>
+                <p>New features will be implemented consistently.
+                </p>
+            </div>
+            < br />
         </div>
     );
 };

@@ -30,8 +30,9 @@ const FoodForm = (props) => (
         lng: props.longitude,
       }}
       onSubmit={async (values) => {    
+        //have to add https://cors-anywhere.herokuapp.com/ and activate proxy in dev mode
         await sleep(500);
-         axios.get(`https://cors-anywhere.herokuapp.com/https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${process.env.REACT_APP_API_GOOGLE_PLACES}&location=${props.latitude},${props.longitude}&radius=${values.radius}&keyword=restaurant,cafe&fields=icon,geometry,formatted_address,name,opening_hours,price_level,opening_hours,business_status`)
+         axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json?key=${process.env.REACT_APP_API_GOOGLE_PLACES}&location=${props.latitude},${props.longitude}&radius=${values.radius}&keyword=restaurant,cafe&fields=icon,geometry,formatted_address,name,opening_hours,price_level,opening_hours,business_status`)
         .then(response =>{
           props.onChange(response.data.results);
         
@@ -58,7 +59,8 @@ const FoodForm = (props) => (
             <option value="50000">30 Miles</option>
 
           </Field>
-          <h3>Select types of foods:</h3>
+          <h3>Select addtional options:</h3>
+          <p>Note 'Restaurants' is defaulted to be on and will always be sent as an option.</p>
           <div  className="grouped fields">
             <div className="field">
                 <div className = "ui toggle checkbox"> 
@@ -68,14 +70,14 @@ const FoodForm = (props) => (
             </div>
             <div className="field">
                 <div className = "ui toggle checkbox"> 
-                <Field type="checkbox" name="foodsChecked" value="Fastfood" />
-                <label>Fastfood</label>
+                <Field type="checkbox" name="foodsChecked" value="liquor_store" />
+                <label>Liquor Store</label>
                 </div>
             </div>
             <div className="field">
                 <div className = "ui toggle checkbox"> 
-                <Field type="checkbox" name="foodsChecked" value="Restaurants" />
-                <label>Restaurants</label>
+                <Field type="checkbox" name="foodsChecked" value="night_club" />
+                <label>Night Club</label>
                 </div>
             </div>
           </div>

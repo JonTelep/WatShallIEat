@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+//import axios from 'axios';
 
 
 const RandomPlace = ({ place }) => {
-    const [photo, setPhoto] = useState([]);
-    const loadPlacePhoto = () => {
+    //const [photo, setPhoto] = useState([]);
+
+    //turns out the images received are images from customers, some not so pleasant photos, therefore I need to re evaluate this approach
+    //commenting out for future use.
+/*     const loadPlacePhoto = () => {
         //base url:
         //https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${props.photoId}&key=${process.env.REACT_APP_API_GOOGLE_PLACES}
         axios.get(`https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${place.photoId}&key=${process.env.REACT_APP_API_GOOGLE_PLACES}`)
@@ -17,11 +20,12 @@ const RandomPlace = ({ place }) => {
         .catch(err => {
             console.log(err);
         });
-    }
 
+    } */
+    console.log(`Thep places.openNow is: ${place.openNow}`);
     return (
         <div key={place.address}>
-            <img className="ui medium circular image" src={photo}></img>
+            {/* <img className="ui medium circular image" src={photo}></img> */}
             <h3>Name:</h3>
             <div>
                 {place.name}
@@ -31,9 +35,14 @@ const RandomPlace = ({ place }) => {
                 {place.address}
             </div>
             <h3>IsOpen:</h3>
-            <div>
-                {place.openNow}
-            </div>
+            { 
+            place.openNow ?    
+            <div> 
+                The place is open!
+            </div> : 
+            <div> The place is not open at this time</div>
+            }
+
         </div>
     );
 
