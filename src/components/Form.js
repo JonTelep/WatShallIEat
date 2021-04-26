@@ -32,6 +32,9 @@ const FoodForm = (props) => (
       onSubmit={async (values) => {    
         //have to add https://cors-anywhere.herokuapp.com/ and activate proxy in dev mode
         await sleep(500);
+
+        
+
         //https://maps.googleapis.com
          axios.get(`/maps/api/place/nearbysearch/json?key=${process.env.REACT_APP_API_GOOGLE_PLACES}&location=${props.latitude},${props.longitude}&radius=${values.radius}&keyword=restaurant,cafe&fields=icon,geometry,formatted_address,name,opening_hours,price_level,opening_hours,business_status`)
         .then(response =>{
