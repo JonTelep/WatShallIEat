@@ -15,6 +15,9 @@ Create a folder to house the project on your local machine
 
 ## Installing `Node-Modules`
 ### `npm install` 
+### `npm install axios`  -How I call google API
+### `npm install express` -Express middleware in order to hit Google API
+### `npm install cors`  -Used with Express to get around CORS
 
 ## Launching the project on `localhost:3000`
 ### `npm start`
