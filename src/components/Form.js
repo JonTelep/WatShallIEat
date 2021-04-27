@@ -42,7 +42,7 @@ const FoodForm = (props) => (
 
         //https://maps.googleapis.com
         //`/maps/api/place/nearbysearch/json?key=${process.env.REACT_APP_API_GOOGLE_PLACES}&location=${props.latitude},${props.longitude}&radius=${values.radius}&keyword=restaurant,cafe&fields=icon,geometry,formatted_address,name,opening_hours,price_level,opening_hours,business_status`,{
-        axios.get(`/maps/api/place/nearbysearch/json`, {
+        axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json`, {
           params: {
             key: process.env.REACT_APP_API_GOOGLE_PLACES,
             location: `${props.latitude},${props.longitude}`,
@@ -51,6 +51,7 @@ const FoodForm = (props) => (
             fields: `icon,geometry,formatted_address,name,opening_hours,price_level,opening_hours,business_status`
           },
           headers: {
+            "Content-Type": "text/html; charset=utf-8",
             "Access-Control-Allow-Origin": "*" 
           }
         })
