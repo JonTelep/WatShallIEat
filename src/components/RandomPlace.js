@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 //import axios from 'axios';
 
 
@@ -22,7 +22,6 @@ const RandomPlace = ({ place }) => {
         });
 
     } */
-    console.log(`Thep places.openNow is: ${place.openNow}`);
     return (
         <div key={place.address}>
             {/* <img className="ui medium circular image" src={photo}></img> */}
@@ -40,7 +39,7 @@ const RandomPlace = ({ place }) => {
             <div> 
                 The place is open!
             </div> : 
-            <div> The place is not open at this time</div>
+            <div> The place is not open at this time.</div>
             }
 
         </div>

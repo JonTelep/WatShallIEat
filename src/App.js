@@ -1,6 +1,7 @@
 import React from 'react';
 import WatShallIEat from './components/WatShallIEat';
 import Header from './components/Header';
+import Footer from './components/Footer';
 import Loader from './components/Loader';
 //import GooglePlaces from '../apis/GooglePlaces';
 import MapContainer from './components/GoogleMap';
@@ -51,6 +52,7 @@ class App extends React.Component {
                         /> */}
                         
                     </div>
+                    <Footer />
                 </div>
             );
             
