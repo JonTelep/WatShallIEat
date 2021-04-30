@@ -1,22 +1,12 @@
-import React from 'react';
-import MapContainer from '../components/GoogleMap';
+import axios from "axios";
 
-const GooglePlaces = ( {lat, lng}) => {
-    console.log('right here');
-    console.log(`latitude is ${lat}`);
-    console.log(`longitude is ${lng}`); 
-    
+const KEY = `${process.env.REACT_APP_API_GOOGLE_PLACES}`;
 
- 
-    return(
-        <div>
-             Below is the map:
-            <MapContainer
-                
-            />
-        </div>
-    );
-}
-
-export default GooglePlaces;
-
+export default axios.create({
+  baseURL: "https://maps.googleapis.com",
+    params : {
+        part: 'snippet',
+        maxResults: 5,
+        key: KEY
+    }
+});

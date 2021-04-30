@@ -13,7 +13,7 @@ bar, liquor_store, night_club
 import React from 'react';
 import { Formik, Field, Form } from 'formik';
 import axios from 'axios';
-
+import GooglePlaces from '../apis/GooglePlaces';
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
@@ -39,20 +39,21 @@ const FoodForm = (props) => (
           keywordArray += `${values.foodsChecked[i]},`;
           console.log(keywordArray)
         }
-
+        
         //https://maps.googleapis.com
         //`/maps/api/place/nearbysearch/json?key=${process.env.REACT_APP_API_GOOGLE_PLACES}&location=${props.latitude},${props.longitude}&radius=${values.radius}&keyword=restaurant,cafe&fields=icon,geometry,formatted_address,name,opening_hours,price_level,opening_hours,business_status`,{
-        axios.get(`https://maps.googleapis.com/maps/api/place/nearbysearch/json`, {
+        const response = await GooglePlaces.get(`/maps/api/place/nearbysearch/json`, {
+          headers: {
+            "Access-Control-Allow-Origin": "http://localhost:3000/",
+            "Access-Control-Allow-Methods": "GET",
+            "Access-Control-Allow-Headers": `application/json`, 
+            "Access-Control-Allow-Credentials": true
+          },  
           params: {
-            key: process.env.REACT_APP_API_GOOGLE_PLACES,
             location: `${props.latitude},${props.longitude}`,
             radius: values.radius,
             keyword: keywordArray,
             fields: `icon,geometry,formatted_address,name,opening_hours,price_level,opening_hours,business_status`
-          },
-          headers: {
-            "Content-Type": "text/html; charset=utf-8",
-            "Access-Control-Allow-Origin": "*" 
           }
         })
         .then(response =>{
@@ -62,6 +63,7 @@ const FoodForm = (props) => (
         .catch(err => {
             console.log(err);
         });
+        console.log(response);
 
       }}
     >
