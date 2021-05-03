@@ -6,7 +6,9 @@ const RandomPlace = ({ place }) => {
     //const [photo, setPhoto] = useState([]);
 
     //turns out the images received are images from customers, some not so pleasant photos, therefore I need to re evaluate this approach
-    //commenting out for future use.
+
+    //commenting out for future use when images are going to be displayed.
+    //This may not be best approach though. it works but the image is from reviews, majority of reviews are bad.
 /*     const loadPlacePhoto = () => {
         //base url:
         //https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${props.photoId}&key=${process.env.REACT_APP_API_GOOGLE_PLACES}
@@ -20,7 +22,6 @@ const RandomPlace = ({ place }) => {
         .catch(err => {
             console.log(err);
         });
-
     } */
     return (
         <div key={place.address}>

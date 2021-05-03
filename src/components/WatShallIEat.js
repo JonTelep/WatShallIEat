@@ -11,7 +11,10 @@ import RandomPlace from './RandomPlace';
 
 
 const WatShallIEat = ( props ) => { 
+    //Controls the display of the api results:
     const [displaySelection, setDisplaySelection] = useState(false);
+
+    //Initializes array to then be randomly selected from
     const [candidatesArray, setCandidatesArray] = useState([
         {
             name: 'Initial',
@@ -21,20 +24,26 @@ const WatShallIEat = ( props ) => {
         }
     ]);
 
-    //functrion to return a random number with parameter being the max value it may return.
+    //function to return a random number with parameter being the max value it may return.
     const getRandomNumber = (max) => {
         return Math.floor(Math.random() * max);
     }
 
     //Creates array of the places returned by google
     const formatResponseBody = (value) => {
-        //Below removes result of random result
+        //Below removes result of random result in order to rerender
         setDisplaySelection(false);
-        //onChange={(value) => setFormBody(value)}
-       
+
+        //Commented out because the props are assinged with the return of onchange.
+        //Was throwing error uncommented
+        //onChange={(value) => setFormBody(value)}     
+        
+        
+        //Debugging type of returned data from nearbysearch api
         console.log(typeof value);
         console.log(value.length);
         console.log(value[1].name);
+
         var resultObject = value;
         var openNow = true;
         for(var i = 0; i<resultObject.length; i ++){
@@ -51,9 +60,9 @@ const WatShallIEat = ( props ) => {
                 photoId: resultObject[i].photos[0].photo_reference,
             };
         }
+
+        //Display array for debugging clarity
         console.log(candidatesArray);
-        var randomFoodIndex = getRandomNumber(candidatesArray.length);
-        console.log(`random index is: ${randomFoodIndex}`);
 
         //Below shows the result of the random result
         setDisplaySelection(true);
