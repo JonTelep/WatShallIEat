@@ -7,23 +7,18 @@ I expect anyone that was invited to this project to have a role one way or anoth
 # Steps to help with project
 Create a folder to house the project on your local machine
 
-## Cloning project
-### `mkdir WatShallIEat`
-### `cd WatShallIEat`
-### `git clone https://github.com/JonTelep/WatShallIEat.git`
-### `cd WatShallIEat`
+# How to run the project
+To run next.js locally you can use the following commands:
+### `npm install`
+### `npm run dev`
 
-## Installing `Node-Modules`
-### `npm install` 
+# How to contribute
+To contribute to the project you will need to create a branch and make your changes there. Once you have made your changes and tested them you can open a pull request. I will review the code and merge it if it is approved.
 
-## Launching the project on `localhost:3000`
-### `npm start`
+# How to build the project
+To build the project you can use the following command:
+### `npm run build`
 
-## Getting Started with the API
-## Installing Axios
-### `npm install axios` -How I call google API
-Message me in order to obtain the API keys needed
-
-Other libraries installed but not in use:
-### `npm install express` -Express middleware in order to hit Google API
-### `npm install cors`  -Used with Express to get around CORS
+# How to deploy the project
+To deploy the project you can use the following command:
+### `npm run deploy`

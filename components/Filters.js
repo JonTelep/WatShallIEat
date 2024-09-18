@@ -36,7 +36,7 @@ export default function Filters({ filters, setFilters, onRadiusChange }) {
       <h2 className="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">Filters</h2>
       {/* Cuisines */}
       <div className="mb-2">
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Cuisines:</label>
+{/*         <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Cuisines:</label>
         {filters.cuisines && filters.cuisines.length > 0 ? (
           filters.cuisines.map((cuisine) => (
             <label key={cuisine} className="inline-flex items-center mr-4">
@@ -51,7 +51,7 @@ export default function Filters({ filters, setFilters, onRadiusChange }) {
           ))
         ) : (
           <p className="text-gray-500 dark:text-gray-400">No cuisines available</p>
-        )}
+        )} */}
       </div>
       {/* Radius */}
       <div className="mb-2">

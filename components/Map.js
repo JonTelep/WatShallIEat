@@ -4,6 +4,8 @@ export default function Map({ userLocation, currentOption }) {
   const mapRef = useRef(null)
   const mapInstanceRef = useRef(null)
   const [googleMapsLoaded, setGoogleMapsLoaded] = useState(false)
+  const directionsServiceRef = useRef(null)
+  const directionsRendererRef = useRef(null)
 
   useEffect(() => {
     if (!window.google) {
@@ -19,51 +21,52 @@ export default function Map({ userLocation, currentOption }) {
   }, [])
 
   useEffect(() => {
-    if (googleMapsLoaded && mapRef.current && (userLocation || currentOption)) {
-      const center = currentOption?.geometry?.location || userLocation
-      
+    if (googleMapsLoaded && mapRef.current && userLocation) {
       if (!mapInstanceRef.current) {
         mapInstanceRef.current = new window.google.maps.Map(mapRef.current, {
-          center: center,
+          center: userLocation,
           zoom: 14,
         })
-      } else {
-        mapInstanceRef.current.setCenter(center)
-      }
-
-      // Clear existing markers
-      if (mapInstanceRef.current.markers) {
-        mapInstanceRef.current.markers.forEach(marker => marker.setMap(null))
-      }
-      mapInstanceRef.current.markers = []
-
-      // Add marker for current option if available
-      if (currentOption && currentOption.geometry) {
-        const marker = new window.google.maps.Marker({
-          position: currentOption.geometry.location,
-          map: mapInstanceRef.current,
-          title: currentOption.name
-        })
-        mapInstanceRef.current.markers.push(marker)
+        directionsServiceRef.current = new window.google.maps.DirectionsService()
+        directionsRendererRef.current = new window.google.maps.DirectionsRenderer()
+        directionsRendererRef.current.setMap(mapInstanceRef.current)
       }
 
       // Add marker for user location
-      if (userLocation) {
-        const userMarker = new window.google.maps.Marker({
-          position: userLocation,
-          map: mapInstanceRef.current,
-          title: 'Your Location',
-          icon: {
-            path: window.google.maps.SymbolPath.CIRCLE,
-            scale: 7,
-            fillColor: '#4285F4',
-            fillOpacity: 1,
-            strokeWeight: 2,
-            strokeColor: '#ffffff',
+      new window.google.maps.Marker({
+        position: userLocation,
+        map: mapInstanceRef.current,
+        title: 'Your Location',
+        icon: {
+          path: window.google.maps.SymbolPath.CIRCLE,
+          scale: 7,
+          fillColor: '#4285F4',
+          fillOpacity: 1,
+          strokeWeight: 2,
+          strokeColor: '#ffffff',
+        }
+      })
+    }
+  }, [userLocation, googleMapsLoaded])
+
+  useEffect(() => {
+    if (googleMapsLoaded && mapInstanceRef.current && userLocation && currentOption) {
+      const destination = currentOption.geometry.location
+      
+      directionsServiceRef.current.route(
+        {
+          origin: userLocation,
+          destination: destination,
+          travelMode: 'DRIVING'
+        },
+        (result, status) => {
+          if (status === 'OK') {
+            directionsRendererRef.current.setDirections(result)
+          } else {
+            console.error('Directions request failed due to ' + status)
           }
-        })
-        mapInstanceRef.current.markers.push(userMarker)
-      }
+        }
+      )
     }
   }, [userLocation, currentOption, googleMapsLoaded])
 

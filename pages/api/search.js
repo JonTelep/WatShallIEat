@@ -35,7 +35,7 @@ export default async function handler(req, res) {
   
         // Include only desired types
         return place.types.some(type => 
-          ['bar', 'restaurant', 'food', 'meal_takeaway', 'meal_delivery'].includes(type)
+          ['bar', 'restaurant', 'food'].includes(type)
         );
       });
   
@@ -47,7 +47,7 @@ export default async function handler(req, res) {
               case 'Delivery':
                 return place.business_status === 'OPERATIONAL' && place.types.includes('meal_delivery');
               case 'Takeout':
-                return place.business_status === 'OPERATIONAL' && place.types.includes('meal_takeaway');
+                return place.business_status === 'OPERATIONAL';
               default:
                 return true;
             }

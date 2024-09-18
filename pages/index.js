@@ -8,7 +8,7 @@ import { searchPlaces, getUserLocation } from '../services/placeService';
 export default function Home() {
   const [filters, setFilters] = useState({
     selectedCuisines: [],
-    cuisines: ['Italian', 'Chinese', 'Mexican', 'Indian', 'Japanese'], // Add more cuisines as needed
+    /*cuisines: ['Italian', 'Chinese', 'Mexican', 'Indian', 'Japanese'], // Add more cuisines as needed*/
     radius: 5,
     selectedOrderOptions: []
   });
@@ -107,7 +107,7 @@ export default function Home() {
             {error}
           </div>
         )}
-        {currentOption && <FoodOption option={currentOption} />}
+        {currentOption && <FoodOption option={currentOption} userLocation={userLocation} />}
         <div className="mt-8 w-full h-64 sm:h-96 rounded-lg overflow-hidden">
           <Map userLocation={userLocation} currentOption={currentOption} />
         </div>
