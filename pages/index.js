@@ -3,28 +3,34 @@ import Filters from '../components/Filters';
 import FoodOption from '../components/FoodOption';
 import Map from '../components/Map';
 import DarkModeToggle from '../components/DarkModeToggle';
+import SpinWheel from '../components/SpinWheel';
 import { searchPlaces, getUserLocation } from '../services/placeService';
 
 export default function Home() {
   const [filters, setFilters] = useState({
-    selectedCuisines: [],
-    /*cuisines: ['Italian', 'Chinese', 'Mexican', 'Indian', 'Japanese'], // Add more cuisines as needed*/
+    foodTypes: [],
     radius: 5,
-    selectedOrderOptions: []
+    priceLevel: [],
+    openNow: true,
   });
   const [results, setResults] = useState([]);
   const [userLocation, setUserLocation] = useState(null);
   const [currentOption, setCurrentOption] = useState(null);
   const [error, setError] = useState(null);
-  const [lastSearchRadius, setLastSearchRadius] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [spinning, setSpinning] = useState(false);
+  const [locationLoading, setLocationLoading] = useState(true);
 
   useEffect(() => {
     async function fetchUserLocation() {
       try {
+        setLocationLoading(true);
         const location = await getUserLocation();
         setUserLocation(location);
       } catch (error) {
-        setError("Unable to get user location. Please enable location services and refresh the page.");
+        setError("📍 Enable location services to find food near you!");
+      } finally {
+        setLocationLoading(false);
       }
     }
     fetchUserLocation();
@@ -32,85 +38,136 @@ export default function Home() {
 
   const handleSearch = useCallback(async () => {
     if (!userLocation) {
-      setError("User location not available");
+      setError("📍 Location not available. Please enable location services.");
       return;
     }
 
     setError(null);
+    setLoading(true);
+    setCurrentOption(null);
 
-    // Only perform a new search if the radius has changed or it's the first search
-    if (lastSearchRadius !== filters.radius) {
-      try {
-        console.log('Initiating search with params:', {
-          location: userLocation,
-          radius: filters.radius * 1609.34,
-          cuisines: filters.selectedCuisines,
-          orderOptions: filters.selectedOrderOptions
-        });
+    try {
+      const data = await searchPlaces({
+        location: userLocation,
+        radius: filters.radius * 1609.34,
+        foodTypes: filters.foodTypes,
+        priceLevel: filters.priceLevel,
+        openNow: filters.openNow,
+      });
 
-        const data = await searchPlaces({
-          location: userLocation,
-          radius: filters.radius * 1609.34, // Convert miles to meters
-          cuisines: filters.selectedCuisines,
-          orderOptions: filters.selectedOrderOptions
-        });
-
-        console.log('Search results:', data);
-
-        if (data.results.length === 0) {
-          setError("No results found. Try expanding your search criteria.");
-          return;
-        }
-
-        setResults(data.results);
-        setLastSearchRadius(filters.radius);
-      } catch (error) {
-        console.error("Search error:", error);
-        setError(`Error fetching results: ${error.message}`);
+      if (data.results.length === 0) {
+        setError("🍽️ No restaurants found. Try expanding your radius or changing filters!");
+        setLoading(false);
         return;
       }
-    }
 
-    if (results.length > 0) {
-      const randomIndex = Math.floor(Math.random() * results.length);
-      console.log(`Selecting random result at index ${randomIndex} from ${results.length} results`);
-      setCurrentOption(results[randomIndex]);
-    } else {
-      setError("No results available. Try performing a new search.");
-    }
-  }, [userLocation, filters, results, lastSearchRadius]);
+      setResults(data.results);
+      
+      // Start spinning animation
+      setSpinning(true);
+      
+      // Pick random after spin animation
+      setTimeout(() => {
+        const randomIndex = Math.floor(Math.random() * data.results.length);
+        setCurrentOption(data.results[randomIndex]);
+        setSpinning(false);
+        setLoading(false);
+      }, 2000);
 
-  const handleRadiusChange = (newRadius) => {
-    setFilters(prev => ({ ...prev, radius: newRadius }));
+    } catch (error) {
+      console.error("Search error:", error);
+      setError(`❌ Error: ${error.message}`);
+      setLoading(false);
+    }
+  }, [userLocation, filters]);
+
+  const handleShuffle = () => {
+    if (results.length > 1) {
+      setSpinning(true);
+      setTimeout(() => {
+        let newIndex;
+        do {
+          newIndex = Math.floor(Math.random() * results.length);
+        } while (results[newIndex] === currentOption && results.length > 1);
+        setCurrentOption(results[newIndex]);
+        setSpinning(false);
+      }, 1500);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-gray-100 transition-colors duration-300">
-      <main className="container mx-auto px-4">
-        <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-center">Wat Shall I Eat</h1>
+    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-red-50 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100 transition-colors duration-300">
+      {/* Header */}
+      <header className="sticky top-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700">
+        <div className="container mx-auto px-4 py-3 flex justify-between items-center">
+          <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-orange-500 to-red-500 bg-clip-text text-transparent">
+            🍔 Wat Shall I Eat
+          </h1>
           <DarkModeToggle />
         </div>
-        <Filters 
-          filters={filters} 
-          setFilters={setFilters} 
-          onRadiusChange={handleRadiusChange}
-        />
+      </header>
+
+      <main className="container mx-auto px-4 py-6 max-w-2xl">
+        {/* Location Status */}
+        {locationLoading && (
+          <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/30 rounded-xl text-center">
+            <div className="animate-pulse">📍 Finding your location...</div>
+          </div>
+        )}
+
+        {/* Filters */}
+        <Filters filters={filters} setFilters={setFilters} />
+
+        {/* Main Action Button */}
         <button 
           onClick={handleSearch}
-          className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out dark:bg-blue-600 dark:hover:bg-blue-700"
+          disabled={loading || locationLoading || !userLocation}
+          className="w-full mt-6 bg-gradient-to-r from-orange-500 to-red-500 hover:from-orange-600 hover:to-red-600 disabled:from-gray-400 disabled:to-gray-500 text-white font-bold py-4 px-6 rounded-xl text-lg shadow-lg transform transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] disabled:cursor-not-allowed"
         >
-          Get Food Option
+          {loading ? '🔄 Finding...' : '🎲 Pick My Food!'}
         </button>
+
+        {/* Error Display */}
         {error && (
-          <div className="mt-4 p-4 bg-red-100 border border-red-400 text-red-700 rounded dark:bg-red-900 dark:border-red-700 dark:text-red-100">
+          <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-200 rounded-xl text-center">
             {error}
           </div>
         )}
-        {currentOption && <FoodOption option={currentOption} userLocation={userLocation} />}
-        <div className="mt-8 w-full h-64 sm:h-96 rounded-lg overflow-hidden">
-          <Map userLocation={userLocation} currentOption={currentOption} />
-        </div>
+
+        {/* Spinning Wheel Animation */}
+        {spinning && <SpinWheel />}
+
+        {/* Result Card */}
+        {currentOption && !spinning && (
+          <>
+            <FoodOption option={currentOption} userLocation={userLocation} />
+            
+            {/* Shuffle Button */}
+            {results.length > 1 && (
+              <button
+                onClick={handleShuffle}
+                disabled={spinning}
+                className="w-full mt-4 bg-white dark:bg-gray-800 border-2 border-orange-500 text-orange-500 hover:bg-orange-50 dark:hover:bg-gray-700 font-semibold py-3 px-6 rounded-xl transition-all duration-200"
+              >
+                🔀 Not feeling it? Pick again! ({results.length} options)
+              </button>
+            )}
+          </>
+        )}
+
+        {/* Map */}
+        {userLocation && (
+          <div className="mt-6 rounded-xl overflow-hidden shadow-lg border border-gray-200 dark:border-gray-700">
+            <div className="h-64 sm:h-80">
+              <Map userLocation={userLocation} currentOption={currentOption} />
+            </div>
+          </div>
+        )}
+
+        {/* Footer */}
+        <footer className="mt-8 pb-6 text-center text-sm text-gray-500 dark:text-gray-400">
+          Made with 🍕 by Telep IO
+        </footer>
       </main>
     </div>
   );

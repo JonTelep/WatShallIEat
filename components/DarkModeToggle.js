@@ -1,31 +1,36 @@
 import { useState, useEffect } from 'react';
 
 export default function DarkModeToggle() {
-  const [darkMode, setDarkMode] = useState(false);
+  const [isDark, setIsDark] = useState(false);
 
   useEffect(() => {
-    const isDarkMode = localStorage.getItem('darkMode') === 'true';
-    setDarkMode(isDarkMode);
-    updateTheme(isDarkMode);
+    // Check for saved preference or system preference
+    const saved = localStorage.getItem('darkMode');
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+    
+    if (saved !== null) {
+      setIsDark(saved === 'true');
+    } else {
+      setIsDark(prefersDark);
+    }
   }, []);
 
-  const updateTheme = (isDarkMode) => {
-    document.documentElement.classList.toggle('dark', isDarkMode);
-    localStorage.setItem('darkMode', isDarkMode);
-  };
-
-  const toggleDarkMode = () => {
-    const newDarkMode = !darkMode;
-    setDarkMode(newDarkMode);
-    updateTheme(newDarkMode);
-  };
+  useEffect(() => {
+    if (isDark) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+    localStorage.setItem('darkMode', isDark);
+  }, [isDark]);
 
   return (
     <button
-      onClick={toggleDarkMode}
-      className="p-2 rounded-full bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200"
+      onClick={() => setIsDark(!isDark)}
+      className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors duration-200"
+      aria-label="Toggle dark mode"
     >
-      {darkMode ? '🌙' : '☀️'}
+      <span className="text-xl">{isDark ? '☀️' : '🌙'}</span>
     </button>
   );
 }
