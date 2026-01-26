@@ -1,24 +1,126 @@
-# Welcome to Wat Shall I Eat
-This is a project to help people decide what to eat around them, and how they want to order. If that's ordering from a food delivery service, driving or walking. The estimated time will be available.
+# 🍔 Wat Shall I Eat
 
-# Collaboration
-I expect anyone that was invited to this project to have a role one way or another. In order to start working on the project you will need to create your own branch and pull the code down locally. Once you've done that reach out to me in order to add the `.env` file which houses the API keys needed for this project. I have left the standard README that React gives below in case you need to know how to run the project locally.
+A fun, mobile-friendly app that helps you decide what to eat! Can't make up your mind? Let the app pick a random restaurant near you based on your preferences.
 
-# Steps to help with project
-Create a folder to house the project on your local machine
+## ✨ Features
 
-# How to run the project
-To run next.js locally you can use the following commands:
-### `npm install`
-### `npm run dev`
+- **🎲 Random Food Picker** - Let fate decide what you're eating
+- **🎯 Smart Filters** - Filter by cuisine type (Fast Food, Pizza, Mexican, Chinese, etc.)
+- **💰 Price Range** - Filter by budget ($, $$, $$$, $$$$)
+- **📍 Location-based** - Finds restaurants near your current location
+- **🗺️ Google Maps Integration** - See directions to your chosen restaurant
+- **🌙 Dark Mode** - Easy on the eyes at night
+- **📱 Mobile-First Design** - Looks great on any device
 
-# How to contribute
-To contribute to the project you will need to create a branch and make your changes there. Once you have made your changes and tested them you can open a pull request. I will review the code and merge it if it is approved.
+## 🚀 Quick Start
 
-# How to build the project
-To build the project you can use the following command:
-### `npm run build`
+### Prerequisites
 
-# How to deploy the project
-To deploy the project you can use the following command:
-### `npm run deploy`
+- Node.js 18+ 
+- A Google Maps API key with the following APIs enabled:
+  - Maps JavaScript API
+  - Places API
+  - Directions API
+
+### Setup
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/JonTelep/WatShallIEat.git
+   cd WatShallIEat
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Create environment file**
+   ```bash
+   cp .env.example .env.local
+   ```
+   
+   Edit `.env.local` and add your Google Maps API key:
+   ```
+   NEXT_PUBLIC_GOOGLE_MAPS_API_KEY=your_api_key_here
+   ```
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+
+5. **Open your browser**
+   Navigate to [http://localhost:3000](http://localhost:3000)
+
+## 🔧 Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+| `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` | Your Google Maps API key | Yes |
+
+## 📁 Project Structure
+
+```
+WatShallIEat/
+├── components/
+│   ├── DarkModeToggle.js   # Light/dark theme toggle
+│   ├── Filters.js          # Food type, radius, price filters
+│   ├── FoodOption.js       # Restaurant result card
+│   ├── Map.js              # Google Maps integration
+│   └── SpinWheel.js        # Fun loading animation
+├── pages/
+│   ├── api/
+│   │   └── search.js       # Google Places API proxy
+│   ├── _app.js
+│   ├── _document.js
+│   └── index.js            # Main page
+├── services/
+│   └── placeService.js     # API client
+├── styles/
+│   └── globals.css         # Global styles & animations
+├── .env.example            # Environment template
+├── package.json
+├── tailwind.config.js
+└── README.md
+```
+
+## 🍕 Supported Food Types
+
+- 🍟 Fast Food
+- 🍕 Pizza
+- 🌮 Mexican
+- 🥡 Chinese
+- 🍝 Italian
+- 🍣 Japanese
+- 🍛 Indian
+- 🍜 Thai
+- 🍔 American
+- 🦐 Seafood
+- 🥘 Korean
+- 🥙 Mediterranean
+- 🥞 Breakfast
+- ☕ Cafe
+- 🍰 Dessert
+- 🥗 Healthy
+
+## 🛠️ Built With
+
+- [Next.js 14](https://nextjs.org/) - React framework
+- [Tailwind CSS](https://tailwindcss.com/) - Styling
+- [Google Maps Platform](https://developers.google.com/maps) - Maps & Places API
+
+## 📝 License
+
+ISC
+
+## 🤝 Contributing
+
+1. Create a feature branch (`git checkout -b feature/amazing-feature`)
+2. Commit your changes (`git commit -m 'Add amazing feature'`)
+3. Push to the branch (`git push origin feature/amazing-feature`)
+4. Open a Pull Request
+
+---
+
+Made with 🍕 by [Telep IO](https://telep.io)
