@@ -4,7 +4,7 @@
   "description": "This is a project to help people decide what to eat around them, and how they want to order. If that's ordering from a food delivery service, driving or walking. The estimated time will be available.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node --test tests/newsletter.test.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start"

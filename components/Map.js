@@ -8,9 +8,11 @@ export default function Map({ userLocation, currentOption }) {
   const directionsRendererRef = useRef(null)
 
   useEffect(() => {
+    const key = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+    if (!key) return
     if (!window.google) {
       const script = document.createElement('script')
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${key}&libraries=places`
       script.async = true
       script.defer = true
       script.onload = () => setGoogleMapsLoaded(true)
@@ -69,6 +71,14 @@ export default function Map({ userLocation, currentOption }) {
       )
     }
   }, [userLocation, currentOption, googleMapsLoaded])
+
+  if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
+    return (
+      <div className="w-full h-full rounded-lg flex items-center justify-center p-4 text-center text-sm text-gray-600 dark:text-gray-300">
+        The map loads when a Google Maps key is configured. Meal ideas on this site do not need it.
+      </div>
+    )
+  }
 
   return <div ref={mapRef} className="w-full h-full rounded-lg" />
 }

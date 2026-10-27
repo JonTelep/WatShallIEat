@@ -4,6 +4,10 @@ export default async function handler(req, res) {
     }
   
     const { location, radius, cuisines, orderOptions } = req.body;
+
+    if (!process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY) {
+      return res.status(503).json({ message: 'Nearby search is not configured yet.' });
+    }
   
     try {
       console.log('API received request:', req.body);
