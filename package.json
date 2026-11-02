@@ -4,7 +4,7 @@
   "description": "This is a project to help people decide what to eat around them, and how they want to order. If that's ordering from a food delivery service, driving or walking. The estimated time will be available.",
   "main": "index.js",
   "scripts": {
-    "test": "node --test tests/newsletter.test.mjs",
+    "test": "node --test tests/newsletter.test.mjs tests/places.test.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start"
@@ -14,8 +14,10 @@
   "license": "ISC",
   "dependencies": {
     "next": "^14.2.7",
+    "opening_hours": "^3.15.0",
     "react": "^18.3.1",
-    "react-dom": "^18.3.1"
+    "react-dom": "^18.3.1",
+    "tz-lookup": "^6.1.25"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.20",
