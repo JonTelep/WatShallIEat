@@ -271,7 +271,7 @@ test('faq names OpenStreetMap and keeps the delivery question', () => {
   assert.doesNotMatch(text, /Google Places/);
   assert.match(text, /Want it delivered\?/);
   assert.match(text, /DoorDash or Uber Eats/);
-  assert.equal(FAQ.length, 5);
+  assert.equal(FAQ.length, 6);
 });
 
 test('geohash covering includes the search point', () => {
