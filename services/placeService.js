@@ -1,56 +1,50 @@
-const API_BASE_URL = '/api';
-
 export async function searchPlaces(params) {
+  let response;
   try {
-    console.log('Sending request to API with params:', params);
-    const response = await fetch(`${API_BASE_URL}/search`, {
+    response = await fetch('/api/search', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Accept: 'application/json',
       },
       body: JSON.stringify(params),
     });
-
-    if (!response.ok) {
-      const errorText = await response.text();
-      console.error('API response not OK:', response.status, errorText);
-      throw new Error(`HTTP error! status: ${response.status}, message: ${errorText}`);
-    }
-
-    const data = await response.json();
-    console.log('API response data:', data);
-
-    if (!data || !Array.isArray(data.results)) {
-      console.error('Invalid response format:', data);
-      throw new Error('Invalid response format');
-    }
-
-    return data;
-  } catch (error) {
-    console.error("Error in searchPlaces:", error);
-    throw error;
+  } catch {
+    throw new Error('Could not reach the search right now. Please try again.');
   }
+
+  let data = null;
+  try {
+    data = await response.json();
+  } catch {
+    data = null;
+  }
+
+  if (!response.ok) {
+    throw new Error((data && data.message) || 'Could not reach the search right now. Please try again.');
+  }
+  if (!data || !Array.isArray(data.results)) {
+    throw new Error('Could not reach the search right now. Please try again.');
+  }
+  return data;
 }
 
 export function getUserLocation() {
   return new Promise((resolve, reject) => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          resolve({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          });
-        },
-        (error) => {
-          console.error("Error getting user location:", error);
-          reject(error);
-        }
-      );
-    } else {
-      const error = new Error("Geolocation is not supported by this browser.");
-      console.error(error);
-      reject(error);
+    if (!navigator.geolocation) {
+      reject(new Error('Geolocation is not supported by this browser.'));
+      return;
     }
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        resolve({
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        });
+      },
+      () => {
+        reject(new Error('Location was denied.'));
+      }
+    );
   });
 }

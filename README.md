@@ -20,16 +20,8 @@ To build the project you can use the following command:
 ### `npm run build`
 
 # How to deploy the project
-Vercel builds this Next.js app with `npm run build`. There is no deploy script.
+Build with `npm run build`. Nearby places come from OpenStreetMap tiles in `public/places`, built with `npm run places:build` from free Geofabrik extracts. Public Overpass is only a fallback outside those tiles. There is no Google Maps or Google Places key. Map data is ODbL, © OpenStreetMap contributors.
 
-watshallieat.com and www.watshallieat.com currently answer with Vercel `DEPLOYMENT_NOT_FOUND`. DNS already points at Vercel, but no deployment is bound to the domain. This repo is not linked to a Vercel project on the team this workspace can see, and that team cannot read the domain.
+Weekly meal ideas still use `RESEND_API_KEY`, `RESEND_SEGMENT_ID`, and `NEWSLETTER_SECRET`. See `.env.example`. Create a Resend segment for weekly meal ideas and, if Resend requires it, a string contact property named `watshallieat_status`. Signup only stores a contact. This app does not send email.
 
-After this pull request is merged:
-
-1. Import `JonTelep/WatShallIEat` into the Vercel account that should own the domain.
-2. Set production environment variables: `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY`, `RESEND_API_KEY`, `RESEND_SEGMENT_ID`, and `NEWSLETTER_SECRET`. See `.env.example`. Create a Resend segment for weekly meal ideas and, if Resend requires it, a string contact property named `watshallieat_status`.
-3. Do not add a mail send. Signup only stores a contact. Welcome mail is not implemented.
-4. Add `watshallieat.com` and `www.watshallieat.com` to the production deployment. `www` redirects to the apex host.
-5. If the domain is still attached to another Vercel account, remove it there first so this project can claim it.
-
-The meal pages, sitemap, and robots file do not need the Google Maps key. Nearby search does.
+The production site is served from Cloudflare. This repository does not deploy itself.
