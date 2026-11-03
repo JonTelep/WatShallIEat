@@ -3,6 +3,7 @@
 //
 //   npm run places:build
 //   node scripts/build-places.mjs --pbf-dir /tmp/osm-build
+//   node scripts/build-places.mjs --state pennsylvania
 //
 // Output: public/places/index.json and public/places/tiles/<geohash>.json
 // Fields: OSM id, name, lat, lon, cuisine, opening_hours, plus address,
@@ -20,58 +21,10 @@ import { TILE_PRECISION, compactFoodPlace } from '../lib/placeTiles.mjs';
 const ROOT = path.join(path.dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = path.join(ROOT, 'public', 'places');
 const UA = 'WatShallIEat/1.0 (+https://watshallieat.com; OSM extract for restaurant search)';
-const MAX_JSON_BYTES = 40 * 1024 * 1024;
 
-const REQUIRED = ['ohio', 'pennsylvania', 'michigan', 'indiana', 'illinois', 'new-york'];
-
-// Smaller extracts first so more states fit before the size budget.
-const MORE = [
-  'district-of-columbia',
-  'delaware',
-  'hawaii',
-  'vermont',
-  'south-dakota',
-  'rhode-island',
-  'new-hampshire',
-  'maine',
-  'wyoming',
-  'mississippi',
-  'west-virginia',
-  'arkansas',
-  'montana',
-  'nebraska',
-  'kansas',
-  'nevada',
-  'north-dakota',
-  'idaho',
-  'iowa',
-  'new-mexico',
-  'alaska',
-  'louisiana',
-  'alabama',
-  'kentucky',
-  'south-carolina',
-  'new-jersey',
-  'oklahoma',
-  'utah',
-  'tennessee',
-  'missouri',
-  'maryland',
-  'connecticut',
-  'oregon',
-  'minnesota',
-  'wisconsin',
-  'arizona',
-  'massachusetts',
-  'georgia',
-  'colorado',
-  'virginia',
-  'north-carolina',
-  'washington',
-  'florida',
-  'texas',
-  'california',
-];
+// Default build is Ohio only. Add one other state with --state, and only if it stays small.
+const REQUIRED = ['ohio'];
+const MAX_STATE_BYTES = 8 * 1024 * 1024;
 
 function argValue(flag) {
   const index = process.argv.indexOf(flag);
@@ -220,11 +173,12 @@ async function main() {
     const snapshot = new Map(byId);
     const { added } = await ingestState(dest, byId);
     totalBytes = [...byId.values()].reduce((sum, row) => sum + rowBytes(row), 0);
-    if (!required && totalBytes > MAX_JSON_BYTES) {
+    const addedBytes = totalBytes - before;
+    if (!required && addedBytes > MAX_STATE_BYTES) {
       byId.clear();
       for (const [id, row] of snapshot) byId.set(id, row);
       totalBytes = before;
-      console.log(`stop before ${state}: tiles would pass ${MAX_JSON_BYTES} bytes`);
+      console.log(`skip ${state}: ${Math.round(addedBytes / 1024)} KB is over the ${Math.round(MAX_STATE_BYTES / 1024)} KB limit for one state`);
       return false;
     }
     usedStates.push(state);
@@ -235,9 +189,10 @@ async function main() {
   for (const state of REQUIRED) {
     await take(state, true);
   }
-  for (const state of MORE) {
-    const kept = await take(state, false);
-    if (!kept) break;
+  const extra = argValue('--state');
+  if (extra && !REQUIRED.includes(extra)) {
+    const kept = await take(extra, false);
+    if (!kept) process.exitCode = 2;
   }
 
   const tiles = new Map();
