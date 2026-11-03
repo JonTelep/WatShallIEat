@@ -1,9 +1,13 @@
 import assert from 'node:assert/strict';
+import { mkdtemp, mkdir, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import test from 'node:test';
 import { filterPlaces, pickRandom, sanitizeFilters } from '../lib/placeFilters.mjs';
 import { hoursStatus } from '../lib/hours.mjs';
 import { deliveryLinks } from '../lib/delivery.mjs';
 import { FAQ } from '../lib/faq.mjs';
+import { geohashEncode, geohashesCovering } from '../lib/geohash.mjs';
 import {
   buildOverpassQuery,
   cacheKeyFor,
@@ -268,6 +272,65 @@ test('faq names OpenStreetMap and keeps the delivery question', () => {
   assert.match(text, /Want it delivered\?/);
   assert.match(text, /DoorDash or Uber Eats/);
   assert.equal(FAQ.length, 5);
+});
+
+test('geohash covering includes the search point', () => {
+  assert.equal(geohashEncode(57.64911, 10.40744, 6), 'u4pruy');
+  const hash = geohashEncode(41.4993, -81.6944, 4);
+  assert.equal(hash.length, 4);
+  const cover = geohashesCovering(41.4993, -81.6944, 1609, 4);
+  assert.ok(cover.includes(hash));
+  assert.ok(!cover.includes(geohashEncode(40.7, -74.0, 4)));
+});
+
+test('local tiles answer a downtown search without Overpass', async () => {
+  const root = await mkdtemp(path.join(tmpdir(), 'wsie-tiles-'));
+  const hash = geohashEncode(41.4993, -81.6944, 4);
+  await mkdir(path.join(root, 'tiles'), { recursive: true });
+  await writeFile(path.join(root, 'index.json'), JSON.stringify({
+    precision: 4,
+    tiles: [hash],
+  }));
+  await writeFile(path.join(root, 'tiles', `${hash}.json`), JSON.stringify([
+    { i: 'node/1', n: 'Johnny Downtown', a: 41.4995, o: -81.694, c: 'american', h: 'Mo-Su 09:00-22:00', y: 'Cleveland' },
+    { i: 'node/2', n: 'Far Cafe', a: 41.7, o: -81.4, c: 'coffee_shop' },
+  ]));
+  let overpassCalls = 0;
+  const data = await searchRestaurants({
+    lat: 41.4993,
+    lng: -81.6944,
+    radiusMiles: 1,
+    placesRoot: root,
+    now: WEDNESDAY_OPEN,
+    fetchFn: async () => {
+      overpassCalls += 1;
+      throw new Error('overpass should not run');
+    },
+  });
+  assert.equal(overpassCalls, 0);
+  assert.equal(data.source, 'local');
+  assert.equal(data.results.length, 1);
+  assert.equal(data.results[0].name, 'Johnny Downtown');
+  assert.equal(data.results[0].hoursState, 'open');
+  assert.equal(data.results[0].city, 'Cleveland');
+
+  const outside = await searchRestaurants({
+    lat: 47.3769,
+    lng: 8.5417,
+    radiusMiles: 1,
+    placesRoot: root,
+    fetchFn: async () => new Response(JSON.stringify({
+      elements: [{
+        type: 'node',
+        id: 9,
+        lat: 47.3769,
+        lon: 8.5417,
+        tags: { name: 'Zurich Cafe', amenity: 'cafe' },
+      }],
+    }), { status: 200, headers: { 'Content-Type': 'application/json' } }),
+  });
+  assert.equal(outside.source, 'overpass');
+  assert.equal(outside.results[0].name, 'Zurich Cafe');
 });
 
 test('saved filters ignore unknown cuisine ids', () => {

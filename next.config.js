@@ -1,5 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Restaurant tiles are static files. Keep them out of the server bundle.
+  outputFileTracingExcludes: {
+    '*': ['./public/places/**'],
+  },
   async redirects() {
     return [
       {

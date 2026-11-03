@@ -20,7 +20,7 @@ To build the project you can use the following command:
 ### `npm run build`
 
 # How to deploy the project
-Build with `npm run build`. Nearby places come from the public Overpass API (OpenStreetMap). There is no Google Maps or Google Places key.
+Build with `npm run build`. Nearby places come from OpenStreetMap tiles in `public/places`, built with `npm run places:build` from free Geofabrik extracts. Public Overpass is only a fallback outside those tiles. There is no Google Maps or Google Places key. Map data is ODbL, © OpenStreetMap contributors.
 
 Weekly meal ideas still use `RESEND_API_KEY`, `RESEND_SEGMENT_ID`, and `NEWSLETTER_SECRET`. See `.env.example`. Create a Resend segment for weekly meal ideas and, if Resend requires it, a string contact property named `watshallieat_status`. Signup only stores a contact. This app does not send email.
 

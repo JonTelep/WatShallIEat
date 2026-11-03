@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node --test tests/newsletter.test.mjs tests/places.test.mjs",
+    "places:build": "node scripts/build-places.mjs",
     "dev": "next dev",
     "build": "next build",
     "start": "next start"

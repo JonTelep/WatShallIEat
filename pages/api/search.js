@@ -9,10 +9,16 @@ export default async function handler(req, res) {
 
   try {
     const params = parseSearchParams(req.body);
-    const data = await searchRestaurants(params);
+    const host = req.headers['x-forwarded-host'] || req.headers.host;
+    const proto = req.headers['x-forwarded-proto'] || 'https';
+    const data = await searchRestaurants({
+      ...params,
+      placesBaseUrl: host ? `${proto}://${host}` : '',
+    });
     return res.status(200).json({
       results: data.results,
       capped: data.capped,
+      source: data.source,
       attribution: OSM_ATTRIBUTION,
       attributionUrl: OSM_ATTRIBUTION_URL,
     });
