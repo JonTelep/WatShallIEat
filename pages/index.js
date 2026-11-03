@@ -1,12 +1,15 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
+import Head from 'next/head';
 import Link from 'next/link';
 import Filters from '../components/Filters';
 import FoodOption from '../components/FoodOption';
+import DeliveryStep from '../components/DeliveryStep';
 import Map from '../components/Map';
 import SiteChrome from '../components/SiteChrome';
 import Seo from '../components/Seo';
 import NewsletterForm from '../components/NewsletterForm';
 import { meals } from '../lib/meals.mjs';
+import { FAQ, structuredData } from '../lib/faq.mjs';
 import { filterPlaces, OSM_ATTRIBUTION, OSM_ATTRIBUTION_URL, pickRandom, poolKey, sanitizeFilters } from '../lib/placeFilters.mjs';
 import { searchPlaces, getUserLocation } from '../services/placeService';
 
@@ -125,6 +128,12 @@ export default function Home() {
   return (
     <SiteChrome>
       <Seo title="What should I eat today? | Wat Shall I Eat" description={description} path="/" />
+      <Head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData(description)) }}
+        />
+      </Head>
       <h1 className="text-4xl font-bold mb-4">What should I eat today?</h1>
       <p className="text-lg mb-3 max-w-3xl">
         Set a distance, choose a cuisine if you want, and tap the button. We pick one place near you from OpenStreetMap. Tap again for a different place from the same results.
@@ -155,6 +164,9 @@ export default function Home() {
             </div>
           )}
           {currentOption && <FoodOption option={currentOption} userLocation={userLocation} />}
+          {currentOption && (
+            <DeliveryStep key={currentOption.id} option={currentOption} onRerun={onSearchClick} />
+          )}
         </div>
         {capped && currentOption && (
           <p className="mt-3 text-sm text-gray-600 dark:text-gray-400">
@@ -183,6 +195,18 @@ export default function Home() {
           ))}
         </ul>
         <p><Link href="/ideas" className="underline">See all meal ideas</Link></p>
+      </section>
+
+      <section className="mb-10" aria-labelledby="faq-heading">
+        <h2 id="faq-heading" className="text-2xl font-semibold mb-3">Questions</h2>
+        <dl className="space-y-4 max-w-3xl">
+          {FAQ.map(([question, answer]) => (
+            <div key={question}>
+              <dt className="font-semibold">{question}</dt>
+              <dd className="text-gray-700 dark:text-gray-300">{answer}</dd>
+            </div>
+          ))}
+        </dl>
       </section>
 
       <NewsletterForm placement="home" />

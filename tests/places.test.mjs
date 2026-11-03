@@ -2,12 +2,18 @@ import assert from 'node:assert/strict';
 import test from 'node:test';
 import { filterPlaces, pickRandom, sanitizeFilters } from '../lib/placeFilters.mjs';
 import { hoursStatus } from '../lib/hours.mjs';
+import { deliveryLinks } from '../lib/delivery.mjs';
+import { FAQ } from '../lib/faq.mjs';
 import {
   buildOverpassQuery,
   cacheKeyFor,
   decoratePlace,
+  endpointAttemptOrder,
   fetchOverpassElements,
+  OVERPASS_ENDPOINTS,
+  OVERPASS_TIMEOUT_MS,
   packElement,
+  resetOverpassRotation,
   searchRestaurants,
   USER_AGENT,
 } from '../lib/places.mjs';
@@ -127,17 +133,35 @@ test('packed places keep tagged facts and do not invent price or rating', () => 
 test('overpass query asks for restaurants, fast food, and cafes', () => {
   const query = buildOverpassQuery(41.499, -81.694, 1609);
   assert.match(query, /restaurant\|fast_food\|cafe/);
-  assert.match(query, /\[timeout:15\]/);
+  assert.match(query, /\[timeout:5\]/);
   assert.match(query, /node\[/);
   assert.match(query, /way\[/);
   assert.match(query, /relation\[/);
+  assert.match(query, /\["name"\]/);
   assert.equal(cacheKeyFor(41.4994, -81.6944, 5.2), '41.499,-81.694,5');
+  assert.ok(OVERPASS_TIMEOUT_MS <= 10000);
+  assert.ok(OVERPASS_ENDPOINTS.some((url) => url.includes('overpass-api.de')));
+  assert.ok(OVERPASS_ENDPOINTS.some((url) => url.includes('overpass.kumi.systems')));
+  assert.ok(OVERPASS_ENDPOINTS.some((url) => url.includes('overpass.private.coffee')));
+});
+
+test('overpass rotates the starting endpoint and retries the first one', () => {
+  resetOverpassRotation();
+  const first = endpointAttemptOrder();
+  const second = endpointAttemptOrder();
+  assert.equal(first.length, OVERPASS_ENDPOINTS.length + 1);
+  assert.equal(first[0], OVERPASS_ENDPOINTS[0]);
+  assert.equal(first[first.length - 1], OVERPASS_ENDPOINTS[0]);
+  assert.equal(second[0], OVERPASS_ENDPOINTS[1]);
+  assert.equal(second[second.length - 1], OVERPASS_ENDPOINTS[1]);
+  resetOverpassRotation();
 });
 
 test('overpass falls back to the next public endpoint', async () => {
+  resetOverpassRotation();
   const calls = [];
   const fetchFn = async (url, options) => {
-    calls.push({ url, userAgent: options.headers['User-Agent'] });
+    calls.push({ url, userAgent: options.headers['User-Agent'], timeout: options.signal });
     if (url.includes('overpass-api.de')) {
       return new Response('busy', { status: 429 });
     }
@@ -152,13 +176,41 @@ test('overpass falls back to the next public endpoint', async () => {
     }), { status: 200, headers: { 'Content-Type': 'application/json' } });
   };
 
-  const elements = await fetchOverpassElements(41.5, -81.69, 1609, fetchFn);
+  const elements = await fetchOverpassElements(41.5, -81.69, 1609, fetchFn, { delayMs: 0 });
   assert.equal(elements.length, 1);
   assert.equal(elements[0].tags.name, 'Backup Cafe');
   assert.equal(calls.length, 2);
   assert.equal(calls[0].userAgent, USER_AGENT);
+  assert.ok(calls[0].timeout);
   assert.match(calls[0].url, /overpass-api\.de/);
   assert.match(calls[1].url, /overpass\.kumi\.systems/);
+});
+
+test('overpass retries after every endpoint fails once', async () => {
+  resetOverpassRotation();
+  const calls = [];
+  const fetchFn = async (url) => {
+    calls.push(url);
+    if (calls.length <= OVERPASS_ENDPOINTS.length) {
+      return new Response('busy', { status: 504 });
+    }
+    return new Response(JSON.stringify({
+      elements: [{
+        type: 'node',
+        id: 2,
+        lat: 41.5,
+        lon: -81.69,
+        tags: { name: 'Retry Diner', amenity: 'restaurant' },
+      }],
+    }), { status: 200, headers: { 'Content-Type': 'application/json' } });
+  };
+
+  const elements = await fetchOverpassElements(41.51, -81.7, 1609, fetchFn, { delayMs: 0 });
+  assert.equal(elements[0].tags.name, 'Retry Diner');
+  assert.equal(calls.length, OVERPASS_ENDPOINTS.length + 1);
+  assert.equal(calls[0], OVERPASS_ENDPOINTS[0]);
+  assert.equal(calls[calls.length - 1], OVERPASS_ENDPOINTS[0]);
+  assert.ok(calls.some((url) => url.includes('overpass.private.coffee')));
 });
 
 test('a repeated search reuses the short cache', async () => {
@@ -181,6 +233,41 @@ test('a repeated search reuses the short cache', async () => {
   assert.equal(first.results[0].name, 'Cached Cafe');
   assert.equal(second.results[0].name, 'Cached Cafe');
   assert.equal(second.results[0].hoursState, 'open');
+});
+
+test('delivery links search DoorDash and Uber Eats for the chosen place', () => {
+  const links = deliveryLinks({
+    name: 'Test Pizza',
+    lat: 41.5,
+    lng: -81.69,
+    address: '1 Main St, Cleveland',
+    city: 'Cleveland',
+  });
+  assert.equal(links.ok, true);
+  assert.match(links.links[0].href, /^https:\/\/www\.doordash\.com\/search\/store\/Test%20Pizza%20Cleveland\/$/);
+  assert.equal(links.links[0].label, 'Search DoorDash');
+  const uber = new URL(links.links[1].href);
+  assert.equal(uber.origin + uber.pathname, 'https://www.ubereats.com/search');
+  assert.equal(uber.searchParams.get('q'), 'Test Pizza');
+  const payload = JSON.parse(Buffer.from(uber.searchParams.get('pl'), 'base64').toString('utf8'));
+  assert.equal(payload.address, '1 Main St, Cleveland');
+  assert.equal(payload.latitude, 41.5);
+  assert.equal(payload.longitude, -81.69);
+
+  const declined = deliveryLinks({ name: 'Closed Kitchen', lat: 1, lng: 2, delivery: 'no' });
+  assert.equal(declined.ok, false);
+  assert.match(declined.reason, /not offering delivery/);
+  assert.match(deliveryLinks(null).reason, /restaurant to look up/);
+  assert.match(deliveryLinks({ name: 'Nameless Spot' }).reason, /address or location/);
+});
+
+test('faq names OpenStreetMap and keeps the delivery question', () => {
+  const text = FAQ.map((entry) => entry.join(' ')).join('\n');
+  assert.match(text, /OpenStreetMap/);
+  assert.doesNotMatch(text, /Google Places/);
+  assert.match(text, /Want it delivered\?/);
+  assert.match(text, /DoorDash or Uber Eats/);
+  assert.equal(FAQ.length, 5);
 });
 
 test('saved filters ignore unknown cuisine ids', () => {
