@@ -24,4 +24,4 @@ Build with `npm run build`. Nearby places come from OpenStreetMap tiles in `publ
 
 Weekly meal ideas still use `RESEND_API_KEY`, `RESEND_SEGMENT_ID`, and `NEWSLETTER_SECRET`. See `.env.example`. Create a Resend segment for weekly meal ideas and, if Resend requires it, a string contact property named `watshallieat_status`. Signup only stores a contact. This app does not send email.
 
-The production site is served from Cloudflare. This repository does not deploy itself.
+Production is the Cloudflare Worker `watshallieat` (static assets plus `worker.js`), with watshallieat.com and www as custom domains. `npm run build` first runs `scripts/build-static.mjs` (robots.txt, sitemap.xml, llms.txt, openapi.json in `public/`), then a static Next export to `out/`. API routes live in `functions/api/` and are routed by `worker.js`. Deploy with `npm run deploy` (needs `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID`). Newsletter secrets are Worker secrets (`wrangler secret put`).

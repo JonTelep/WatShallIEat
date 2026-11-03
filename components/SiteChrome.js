@@ -9,6 +9,7 @@ export default function SiteChrome({ children }) {
       <header className="container mx-auto px-4 py-6 flex flex-wrap items-center justify-between gap-4">
         <Link href="/" className="text-2xl font-bold">Wat Shall I Eat</Link>
         <nav className="flex flex-wrap items-center gap-4 text-sm">
+          <Link href="/near-me" className="underline">Ohio cities</Link>
           <Link href="/ideas" className="underline">Meal ideas</Link>
           <Link href="/newsletter" className="underline">Weekly meal ideas</Link>
           <DarkModeToggle />

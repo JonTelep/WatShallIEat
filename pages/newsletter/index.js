@@ -11,8 +11,11 @@ const errors = {
   failed: 'Could not subscribe right now. Please try again later.',
 };
 
-export default function NewsletterPage({ joined, error }) {
+export default function NewsletterPage() {
   const router = useRouter();
+  const q = router.isReady ? router.query : {};
+  const joined = q.joined === '1';
+  const error = typeof q.error === 'string' && errors[q.error] ? q.error : '';
   const refCode = typeof router.query.ref === 'string' ? router.query.ref : 'direct';
   return (
     <SiteChrome>
@@ -40,14 +43,4 @@ export default function NewsletterPage({ joined, error }) {
       <NewsletterForm placement="newsletter-page" refCode={refCode} />
     </SiteChrome>
   );
-}
-
-export function getServerSideProps({ query }) {
-  const error = typeof query.error === 'string' ? query.error : '';
-  return {
-    props: {
-      joined: query.joined === '1',
-      error: errors[error] ? error : '',
-    },
-  };
 }

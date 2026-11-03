@@ -8,7 +8,9 @@
     "places:build": "node scripts/build-places.mjs",
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "prebuild": "node scripts/build-static.mjs",
+    "deploy": "npm run build && wrangler deploy"
   },
   "keywords": [],
   "author": "",
